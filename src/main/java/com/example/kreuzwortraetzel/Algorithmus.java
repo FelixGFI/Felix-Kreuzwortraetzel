@@ -105,8 +105,8 @@ public class Algorithmus {
 
     /**
      *
-     * @param dataWanted
-     * @param dataGiven
+     * @param dataWanted Kreuzwortdata of which the right coordinates and orientation are not know yet
+     * @param dataGiven Kreuzwortdata of wich the corodinates and oriantation are known and which is therefore idealy allready plased in the grid.
      * @return if Match was found, returns updated dataWanted with correct coordinates, otherwise returns null
      */
 
@@ -115,14 +115,38 @@ public class Algorithmus {
         int iGiven = 0;
         int iWanted = 0;
         boolean matchFound = false;
+        int xCord = -1;
+        int yCord = - 1;
+        char horizontalOrVertical = ' ';
 
         for(char cGiven : dataGiven.getWord().toCharArray()){
 
             for(char cWanted : dataWanted.getWord().toCharArray()) {
 
                 if(cWanted == cGiven) {
-                    matchFound = true;
-                    break;
+                    if(dataGiven.getHorizontalOrVertical() == 'h') {
+                        xCord = dataGiven.getXCord() + iGiven;
+                        yCord = dataGiven.getYCord() - iWanted;
+                        horizontalOrVertical = 'v';
+                    } else if(dataGiven.getHorizontalOrVertical() == 'v') {
+                        xCord = dataGiven.xCord - iWanted;
+                        yCord = dataGiven.yCord + iGiven;
+                        horizontalOrVertical = 'h';
+                    }
+
+                    if(horizontalOrVertical == 'h') {
+                        if (yCord % 2 != 0) {
+                            matchFound = true;
+                        }
+                    } else if(horizontalOrVertical == 'v') {
+                        if(xCord % 2 != 0) {
+                            matchFound = true;
+                        }
+                    }
+
+                    if (matchFound) {
+                        break;
+                    }
                 }
                 iWanted++;
             }
@@ -130,28 +154,12 @@ public class Algorithmus {
             iWanted = 0;
             iGiven++;
         }
-        if(matchFound != false) {
-            int xCord = -1;
-            int yCord = - 1;
-            char horizontalOrVertical = ' ';
+        if(matchFound) {
 
-            if(dataGiven.getHorizontalOrVertical() == 'h') {
-                xCord = dataGiven.getXCord() + iGiven;
-                yCord = dataGiven.getYCord() - iWanted;
-                horizontalOrVertical = 'v';
-            } else if(dataGiven.getHorizontalOrVertical() == 'v') {
-                xCord = dataGiven.xCord - iWanted;
-                yCord = dataGiven.yCord + iGiven;
-                horizontalOrVertical = 'h';
-            }
 
 
 
             kreuzwortData = new KreuzwortData(dataWanted.getWord(), xCord, yCord, horizontalOrVertical);
-        }
-
-        if(dataWanted.getWord().equalsIgnoreCase("SHERLOCK") || dataWanted.getWord().equalsIgnoreCase("FRANK")) {
-            System.out.println(dataWanted.getWord() + " " + iWanted + " " + dataGiven.getWord() + " " + iGiven + " " + dataWanted.getHorizontalOrVertical() + " " + dataGiven.getHorizontalOrVertical());
         }
 
         return kreuzwortData;
